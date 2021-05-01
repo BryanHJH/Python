@@ -48,7 +48,8 @@ This section contains all the expected files for this assignment.
 1. [admin_login_credentials.txt](admin_login_credentials.txt): Text file containing all credentials of admins, including the       usernames, passwords, names, address, contact no. and so on  
 2. customer_login_credentials.txt: Text file contaning all credentials of users, including the usernames, passwords, names, age, address, contact no. and so on  
 3. Car_Records.txt: Text file containing the details of cars, including car names, brand, model, status (available or rented), duration being rented, price  
-4. Customer_Records.txt: Text file containing the purchase details of customers, including their names, IC, bookings, no. of cars rented, amount paid, amount overdue, rental duration  
+4. Customer_Records.txt: Text file containing the purchase details of customers, including their names, IC, bookings, no. of cars rented, amount paid, amount overdue, rental duration 
+5. Admin_Records.txt: Text file containing the details of Admins 
 
 ## 2.3 PDF files
 1. Documentation: Converted from a Word file about the program written.
@@ -83,7 +84,7 @@ This section contains all the expected files for this assignment.
       12. Bookings (For Customers Only)
       13. No. of Cars Rented/Purchase History (For Customers Only)
       14. Rental Duration (For Customers Only)
-   5. Admin and Customers will have their informatin appended to different files, which will be accepted as an argument in register() function.
+   5. Admin and Customers will have their information appended to different files, which will be accepted as an argument in register() function.
    6. Before registering, the system **must** check whether **the user is already registered** (It can be in another function or be in the same function)
    
 ### 4.1.3 Login Screen
@@ -108,15 +109,14 @@ This section contains all the expected files for this assignment.
    1. Car Name
    2. Car Brand
    3. Car Model
-   4. Owner's name
-   5. Status
-   6. Duration left being rented
-   7. Short Description
-   8. Seats
-   9. Luggage
+   4. Plate Number
+   5. Owner's name
+   6. Status
+   7. Duration left being rented
+   8. Short Description
+   9. Seats
    10. Fuel Type
-   11. No. of doors (optional)
-   12. Price
+   11. Price
 4. Car Details should be saved as a list
    
 ### 4.2.3 Modifying Car Details
@@ -127,8 +127,8 @@ This section contains all the expected files for this assignment.
 ### 4.2.4 Displaying all records
 1. To display only cars that are **rented out**, can use if...else statement to filter out the Status of the cars then print them out. (Refer to the Cars_Records.txt)
 2. To display only cars that are **available**, can use if...else statement to filter out the Status of the cars then print them out. (Refer to the Cars_Records.txt)
-3. To display only **customers' bookings**, we can use if...else statement to filter out base on the **date of bookings** then print them out. (Refer to the Customer_Records.txt)
-4. To display only **customers' payment**, we can use if...else statement to filter out base on the **date of payment** then print them out. (Refer to the Customer_Records.txt)
+3. To display only **customers' bookings** (Refer to the Customer_Records.txt)
+4. To display only **customers' payment** (Refer to the Customer_Records.txt)
 5. When user select options 1 and 2, it is automatically printed out because no input is needed.
 6. When user select options 3 and 4, the system requires an input (**probably by month** is best) so that the system can check for data in that month. (Probably need to **'import datetime'**)
 
@@ -138,11 +138,11 @@ This section contains all the expected files for this assignment.
 3. User needs to input the customer name to make the search. So use if customer_name in line_of_file then print the information
 
 ### 4.2.6 Return a Rented Car
-1. I think this is just Modifying Car Details part but only specific to the status and duration of the car. 
+1. I think this is just Modifying Car Details part but only specific to the status and duration of the car. (Update details of car and customer)
 
 ## 4.3 For Customers (Unregistered)
 ### 4.3.1 Displaying all Records
-1. Show all car details except status and duration. Only cars that are available are shown.
+1. Show all car details except status, owner's name and duration. Only cars that are available are shown.
 
 ## 4.4 For Customers (Registered)
 ### 4.4.1 Modifying Personal Details
@@ -155,6 +155,7 @@ This section contains all the expected files for this assignment.
    6. Age
    7. Address
    8. Phone Number
+   9. Include all Car Details
 2. Accepts input (sentinel loop, meaning keep asking until the user say quit) where the user select which detail to modify.
 3. To modify, use the same method as the admin
 
@@ -164,7 +165,7 @@ This section contains all the expected files for this assignment.
 
 ### 4.4.3 View Detail of Cars to be Rented Out
 1. Search through the Car_Records.txt for the customer's Full Name and print out all the cars that have the same match
-2. The cars that are printed out must have the status 'available'
+2. The cars that are printed out must have the status 'available', **if rented, show 'rented'.**
 
 ### 4.4.4 Renting a car for a duration
 1. Display all cars that are available that does not belong to the user
@@ -175,12 +176,12 @@ This section contains all the expected files for this assignment.
 ### 4.4.5 Making payment 
 1. This is not in the main option menu. This will only appear after the Renting section where the input will be asked to "Continue to Payments" or "Continue Browsing" or "Cancel Booking".
 2. If "Continue to Payments", the system will check for the duration of days and multiply with the renting rate of the selected car.
-3. After calculation, the system will display the price then ask for payment method (Credit/Debit Card, Direct Debit)
+3. After calculation, the system will display the price then ask for payment method (Credit/Debit Card, Direct Debit, PayPal)
 4. If Credit Card/Debit Card, ask for:
    1. Card Number
-   2. Card Owner name (optional)
-   3. CVV
-   4. Tac Code (simulated)
+   2. Card Owner Name
+   3. Expiry date
+   4. CVV
 5. If Direct Debit:
    1. Show the account information of the Rental Company bank, including:
       1. Bank Name
@@ -188,8 +189,11 @@ This section contains all the expected files for this assignment.
       3. Account Name
       4. Account Currency
       5. Account Type
-6. Should we include PayPal?
-7. After payment is completed, using the variables set in the previous section, update the Car_Records.txt
+6. If PayPal:
+   1. Request PayPal email
+   2. Request PayPal password
+7. Should we include PayPal?
+8. After payment is completed, using the variables set in the previous section, update the Car_Records.txt
 
 ## 5. Extra details
 ### 5.1 Navigation between options
@@ -211,8 +215,8 @@ Please type the name of the car that you wish to modify[Press Y to return to mai
 ------------------------------------------
 Example of Display records:
 Display Records of:
-[1] Rented cars
-[2] Available cars
-[3] Customer Bookings
-[4] Customer Payments
+    [1] Rented cars
+    [2] Available cars
+    [3] Customer Bookings
+    [4] Customer Payments
 [Y] Return to Main Menu
