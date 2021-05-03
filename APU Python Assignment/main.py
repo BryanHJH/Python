@@ -15,40 +15,69 @@ def main():
     Output:
         The user can select their role, then login/register and carry out the available task
     '''
-
+    clear()
     # First Landing page (Role Selection page)
+
     print("You are logging in as: ", end='\n')
     print("[1] Administrator")
     print("[2] Customer", end='\n\n')
-    customer_choice = int(input("Please select one option (A number): "))
+    print("[X] Exit")
+    user_choice = (input("Please select one option (A number): "))
 
-    if customer_choice == 1:
-        file = open('admin_login_credentials', 'r')
-        login('administrator', file)  # Logging in as an administrator
+
+    if user_choice == '1':
+        clear()
+        print("MAIN MENU")
+        print("---------")
+        print("[1] Login")
+        print("[2] Register")
+        print("[X] Return to previous page")
+        admin_input = input("Please select your option: ")
+
+        if admin_input == '1':
+            login('administrator', 'admin_login_credentials')  # Logging in as an administrator
+
+        elif admin_input == '2': 
+            register('adminstrator', 'admin_login_credentials')
+
+        elif admin_input.lower() == 'x': 
+            exit()
+
+        else:
+            print('Invalid input. Please try again.')
+            admin_input = input("Please select your option: ")
+
+    elif user_choice == '2':
+        clear()
+        print("MAIN MENU")
+        print("---------")
+        print("[1] Login")
+        print("[2] Register")
+        print("[X] Return to previous page")
+        customer_input = input("Please select your option: ")
+            
+        if customer_input == '1':
+            login('customer', 'customer_login_credentials')  # Logging in as a customer
+
+        elif customer_input == '2':
+            register('customer', 'customer_login_credentials')
+
+        elif customer_input.lower() == 'x':
+            exit()
+
+        else:
+            print("Invalid Input. Please try again.")
+            customer_input = input("Please select your option: ")
+    
+    elif user_choice == 'x':
+        exit()
 
     else:
-        file = open('customer_login_credentials', 'r')
-        login('customer', file)  # Logging in as a customer
-    
-    pass
+        print("Invalid input. Please try again.")
+        user_choice = input("Plesae select your option")
 
-def validate_user(username, password, file):
-    '''
-    Validates the information input from Login()
+def login(role, selected_file): 
 
-    Arguments:
-        username: str, the user's username for logging in
-        password: str, the user's password for logging in, needs to be decrypted/insert encrypted version of password
-
-    Output:
-        Bool
-
-    Exceptions:
-        Raises excpetion if "username" and "password" from user does not match the credentials in text file, it would raise an exception where the user is not able to login. 
-    '''
-    pass
-
-def login(role, file):
     '''
     Login function
 
@@ -61,9 +90,47 @@ def login(role, file):
     Exceptions:
         No exceptions
     '''
-    pass
+    clear()
+    print('LOGIN')
+    print('-----')
+    print()
 
-def register(file):
+    # Accepting input from user
+    while True:
+        username = input("Please provide your username: ")
+        password = getpass("Please provide your password: ")
+        
+        if username != '' and password != '':
+            break
+        else:
+            print("Username and/or password cannot be blank.")
+            continue
+    
+    user_details = []
+    username_password = {}
+
+    # Adding all input from text file to a list
+    with open(selected_file, 'r') as fp:
+        user_details = [line.strip().split(', ') for line in fp]
+    
+    # Adding (username: password) key value pairs into a dictionary
+    if len(user_details) == 0:
+        print("You are not registered yet.")
+
+    for item in user_details:
+        username_password[item[0]] = item[2]
+    
+    if username in username_password.keys():         # Checking whether the username given exists or not
+        if hash_password(password) == username_password[username]:  # Checking whether the given password matches or not
+            print(f"{username} is logged in.")
+            granted_for_access(role)
+        else:
+            print("Wrong password")
+    else:
+        print("Wrong username")
+
+
+def register(role, file):
     '''
     Register function
 
@@ -76,6 +143,182 @@ def register(file):
     Exceptions:
         If "password" and "confirm password" section are different, the user is not able to register. The system will prompt the user once more to re-enter his/her password in both sections. 
     '''
-    pass
+    clear()
+    user_details = []
+
+    print("REGISTER")
+    print("--------")
+
+    # Registering new username
+    while True: 
+        username = input("Please provide your username: ").title()
+
+        if username != '':
+            user_details.append(username)
+            break
+        else:
+            print("Username cannot be blank!")
+            continue
+
+    # Resgistering new email
+    while True: 
+        email = input("Please provide your email: ")
+
+        if email != '':
+            user_details.append(email)
+            break
+        else:
+            print("Email cannot be blank!")
+            continue
+
+    # Registering new password
+    while True: 
+        password = getpass("Please type in your password: ")
+
+        if password != '' and len(password) >= 10:
+            break
+        elif password == '':
+            print("Password cannot be blank!")
+            continue
+        elif len(password) < 10:
+            print("Password length needs to be more than 10")
+        else:
+            print("Please provide a password.")
+
+    # Confirming new password
+    while True:
+        confirmPassword = getpass("Please confirm your password: ")
+        
+        if confirmPassword == password:
+            user_details.append(hash_password(password))
+            break
+        else:
+            print("Password do not match. Please try again.")
+            continue
+    
+    print("Personal Details")
+    print("----------------")
+    print("Please provide the correct details in the following sections.")
+        
+    # Registering Customer's full name
+    while True:
+        full_name = input("Please enter your full name: ").title()
+
+        if full_name != "":
+            user_details.append(full_name)
+            break
+        else:
+            print("Name cannot be blank!")
+            continue
+            
+    while True:
+        identification = input("Please provide your IC or Passport number: ")
+            
+        if identification != "":
+            user_details.append(identification)
+            break
+        else:
+            print("IC/Passport number cannot be blank!")
+            continue
+
+    if userAlreadyExists(full_name, identification, file):
+        print("You are already registered. You will now be redirected to login.")
+        login(role, file)
+        
+    else:
+        # Registering user's age
+        while True:
+            age = int(input("Please provide your age: "))
+
+            if age > 0 or age != '':
+                user_details.append(age)
+                break
+            else:
+                print("Age cannot be blank or 0")
+                continue
+        
+        # Registering user's contact number
+        while True:
+            phone = (input("Please provide your contact number: "))
+
+            if phone != '':
+                user_details.append(phone)
+                break
+            else:
+                print("Contact number cannot be blank.")
+                continue
+
+        # Registeringk user's address
+        while True:
+            address = input("Please provide your address: ")
+
+            if address != "":
+                user_details.append(address)
+                break
+            else:
+                print("Address cannot be blank!")
+                continue
+
+        # If role is administrator, record down his given admin ID       
+        if role.lower() == "administrator":
+            while True:
+                admin_id = input("Please provide your give Admin ID: ")
+
+                if admin_id != "":
+                    user_details.append(admin_id)
+                    break
+                else:
+                    print("Admin ID cannot be blank.")
+                    continue
+        
+        # Open the respective file and append all the details into it.
+        with open(file, 'a') as fp:
+            for detail in user_details:
+                fp.write(str(detail) + ', ')
+            fp.write('\n')
+
+        granted_for_access(role)
+
+def userAlreadyExists(fullname=None, identification=None, file=None):
+    '''
+    Function that checks whether the user is registered or not
+
+    Arguments:
+        fullname: Checks for the Full Name of the user
+        identification: Checks for the IC/Passport Number of the user
+        file: Specifies which file to look for the previous arguments
+
+    Output:
+        Bool
+    '''
+    check_for_duplicate = {}
+    with open(file, 'r') as fp:
+        user_details = [line.strip().split(', ') for line in fp]
+
+    if len(user_details) != 0:
+        for item in user_details:
+            check_for_duplicate[item[3]] = item[4]
+
+        if fullname in check_for_duplicate.keys():
+            if identification == check_for_duplicate[fullname]:
+                return True
+            else:
+                return False
+        else:
+            return False
+
+def hash_password(password):
+    return hashlib.sha256(str.encode(password)).hexdigest()
+
+def granted_for_access(role):
+    '''
+    Grants acccess for the users based on their roles
+
+    Arguments:
+        role: Checks whether the user is an Administrator or Customer
+
+    Output:
+        Bool
+    '''
 
 main()
