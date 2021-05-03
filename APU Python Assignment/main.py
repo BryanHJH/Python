@@ -16,59 +16,79 @@ def main():
         The user can select their role, then login/register and carry out the available task
     '''
     clear()
-    # First Landing page (Role Selection page)
 
+    # First Landing page (Role Selection page)
     print("You are logging in as: ", end='\n')
     print("[1] Administrator")
     print("[2] Customer", end='\n\n')
     print("[X] Exit")
     user_choice = (input("Please select one option (A number): "))
 
-
+    # User is an Administrator
     if user_choice == '1':
         clear()
+
+        # Administrator Login/Register Option screen
+        role = 'administrator'
         print("MAIN MENU")
         print("---------")
         print("[1] Login")
-        print("[2] Register")
+        print("[2] Register", end='\n\n')
         print("[X] Return to previous page")
         admin_input = input("Please select your option: ")
 
+        # Selected Login
         if admin_input == '1':
-            login('administrator', 'admin_login_credentials')  # Logging in as an administrator
+            if login(role, 'admin_login_credentials'):
+                granted_for_access(role)
 
+        # Selected Register
         elif admin_input == '2': 
-            register('adminstrator', 'admin_login_credentials')
+            register(role, 'admin_login_credentials')
+            if login(role, 'admin_login_credentials'):
+                granted_for_access(role)
 
+        # Selected Exit Program
         elif admin_input.lower() == 'x': 
             exit()
 
+        # Provided wrong input
         else:
             print('Invalid input. Please try again.')
             admin_input = input("Please select your option: ")
 
+    # User is a Customer
     elif user_choice == '2':
         clear()
+        role = 'customer'
         print("MAIN MENU")
         print("---------")
         print("[1] Login")
-        print("[2] Register")
+        print("[2] Register", end='\n\n')
         print("[X] Return to previous page")
         customer_input = input("Please select your option: ")
             
+        # Selected Login
         if customer_input == '1':
-            login('customer', 'customer_login_credentials')  # Logging in as a customer
+            if login(role, 'customer_login_credentials'):
+                granted_for_access(role)
 
+        # Selected Register
         elif customer_input == '2':
-            register('customer', 'customer_login_credentials')
+            register(role, 'customer_login_credentials')
+            if login(role, 'customer_login_credentials'):
+                granted_for_access(role)
 
+        # Selected Exit Program
         elif customer_input.lower() == 'x':
             exit()
 
+        # Provided wrong input
         else:
             print("Invalid Input. Please try again.")
             customer_input = input("Please select your option: ")
     
+    # Exit program
     elif user_choice == 'x':
         exit()
 
@@ -90,6 +110,7 @@ def login(role, selected_file):
     Exceptions:
         No exceptions
     '''
+    global username
     clear()
     print('LOGIN')
     print('-----')
@@ -120,15 +141,18 @@ def login(role, selected_file):
     for item in user_details:
         username_password[item[0]] = item[2]
     
-    if username in username_password.keys():         # Checking whether the username given exists or not
-        if hash_password(password) == username_password[username]:  # Checking whether the given password matches or not
-            print(f"{username} is logged in.")
-            granted_for_access(role)
+    while True:
+        if username in username_password.keys():         # Checking whether the username given exists or not
+            if hash_password(password) == username_password[username]:  # Checking whether the given password matches or not
+                return True
+                
+            else:
+                print("Wrong password")
+                password = input("Please provide your password: ")
         else:
-            print("Wrong password")
-    else:
-        print("Wrong username")
-
+            print("Wrong username")
+            username = input("Please provide your username: ")
+            password = getpass("Please provide your password: ")
 
 def register(role, file):
     '''
@@ -151,7 +175,7 @@ def register(role, file):
 
     # Registering new username
     while True: 
-        username = input("Please provide your username: ").title()
+        username = input("Please provide your username: ")
 
         if username != '':
             user_details.append(username)
@@ -196,6 +220,7 @@ def register(role, file):
             print("Password do not match. Please try again.")
             continue
     
+    print("\n\n")
     print("Personal Details")
     print("----------------")
     print("Please provide the correct details in the following sections.")
@@ -277,8 +302,6 @@ def register(role, file):
                 fp.write(str(detail) + ', ')
             fp.write('\n')
 
-        granted_for_access(role)
-
 def userAlreadyExists(fullname=None, identification=None, file=None):
     '''
     Function that checks whether the user is registered or not
@@ -320,5 +343,26 @@ def granted_for_access(role):
     Output:
         Bool
     '''
+    if role.lower() == 'administrator':
+        print(f"WELCOME, ADMINISTRATOR {username}")
+        print("----------------------------------")
+        print("Please select what you would like to do:")
+        print("[1] Add Cars to be rented out")
+        print("[2] Modify Car Details")
+        print("[3] Display all records")
+        print("[4] Display specific records")
+        print("[5] Return Rented Car", end='\n\n')
+        print("[X] Return to Login/Register screen")
+        option = input("Please select an option [a number]: ")
+        admin_access(option)
+    
+    else:
+        print("You are granted access permissions of a customer.")
+
+def admin_access(option):
+    pass
+
+def customer_access(option):
+    pass
 
 main()
