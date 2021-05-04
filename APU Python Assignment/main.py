@@ -39,13 +39,13 @@ def main():
 
         # Selected Login
         if admin_input == '1':
-            if login(role, 'admin_login_credentials'):
+            if login('admin_login_credentials'):
                 granted_for_access(role)
 
         # Selected Register
         elif admin_input == '2': 
             register(role, 'admin_login_credentials')
-            if login(role, 'admin_login_credentials'):
+            if login('admin_login_credentials'):
                 granted_for_access(role)
 
         # Selected Exit Program
@@ -70,13 +70,13 @@ def main():
             
         # Selected Login
         if customer_input == '1':
-            if login(role, 'customer_login_credentials'):
+            if login('customer_login_credentials'):
                 granted_for_access(role)
 
         # Selected Register
         elif customer_input == '2':
             register(role, 'customer_login_credentials')
-            if login(role, 'customer_login_credentials'):
+            if login('customer_login_credentials'):
                 granted_for_access(role)
 
         # Selected Exit Program
@@ -96,7 +96,7 @@ def main():
         print("Invalid input. Please try again.")
         user_choice = input("Plesae select your option")
 
-def login(role, selected_file): 
+def login(selected_file): 
 
     '''
     Login function
@@ -248,7 +248,7 @@ def register(role, file):
 
     if userAlreadyExists(full_name, identification, file):
         print("You are already registered. You will now be redirected to login.")
-        login(role, file)
+        login(file)
         
     else:
         # Registering user's age
