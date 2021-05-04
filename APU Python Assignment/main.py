@@ -34,7 +34,7 @@ def main():
         print("---------")
         print("[1] Login")
         print("[2] Register", end='\n\n')
-        print("[X] Return to previous page")
+        print("[R] Return to previous page")
         admin_input = input("Please select your option: ")
 
         # Selected Login
@@ -49,8 +49,8 @@ def main():
                 granted_for_access(role)
 
         # Selected Exit Program
-        elif admin_input.lower() == 'x': 
-            exit()
+        elif admin_input.lower() == 'r': 
+            main()
 
         # Provided wrong input
         else:
@@ -65,7 +65,7 @@ def main():
         print("---------")
         print("[1] Login")
         print("[2] Register", end='\n\n')
-        print("[X] Return to previous page")
+        print("[R] Return to previous page")
         customer_input = input("Please select your option: ")
             
         # Selected Login
@@ -80,8 +80,8 @@ def main():
                 granted_for_access(role)
 
         # Selected Exit Program
-        elif customer_input.lower() == 'x':
-            exit()
+        elif customer_input.lower() == 'r':
+            main()
 
         # Provided wrong input
         else:
@@ -343,6 +343,7 @@ def granted_for_access(role):
     Output:
         Bool
     '''
+    clear()
     if role.lower() == 'administrator':
         print(f"WELCOME, ADMINISTRATOR {username}")
         print("----------------------------------")
