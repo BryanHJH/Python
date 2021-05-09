@@ -45,7 +45,7 @@ def main():
         # Selected Register
         elif admin_input == '2': 
             register(role, 'admin_login_credentials')
-            if login('admin_login_credentials'):
+            if result:
                 granted_for_access(role)
 
         # Selected Exit Program
@@ -55,7 +55,7 @@ def main():
         # Provided wrong input
         else:
             print('Invalid input. Please try again.')
-            admin_input = input("Please select your option: ")
+            main()
 
     # User is a Customer
     elif user_choice == '2':
@@ -64,20 +64,27 @@ def main():
         print("MAIN MENU")
         print("---------")
         print("[1] Login")
-        print("[2] Register", end='\n\n')
+        print("[2] Register")
+        print("[3] Skip", end='\n\n')
         print("[R] Return to previous page")
         customer_input = input("Please select your option: ")
             
         # Selected Login
         if customer_input == '1':
             if login('customer_login_credentials'):
-                granted_for_access(role)
+                status = 'registered'
+                granted_for_access(role, status)
 
         # Selected Register
         elif customer_input == '2':
             register(role, 'customer_login_credentials')
-            if login('customer_login_credentials'):
-                granted_for_access(role)
+            if result:
+                status = 'registered'
+                granted_for_access(role, status)
+
+        elif customer_input == '3':
+            status = 'unregistered'
+            granted_for_access(role, status)
 
         # Selected Exit Program
         elif customer_input.lower() == 'r':
@@ -86,7 +93,7 @@ def main():
         # Provided wrong input
         else:
             print("Invalid Input. Please try again.")
-            customer_input = input("Please select your option: ")
+            main()
     
     # Exit program
     elif user_choice == 'x':
@@ -94,7 +101,7 @@ def main():
 
     else:
         print("Invalid input. Please try again.")
-        user_choice = input("Plesae select your option")
+        main()
 
 def login(selected_file): 
 
@@ -105,7 +112,8 @@ def login(selected_file):
         file: The respective file to check with, either admin or customer
 
     Output:
-        No output
+        LOGIN SUCCESSFUL: Returns a Boolean (TRUE)
+        LOGIN FAILURE: Prints out a statement informing the user of the failure and restarting the process
 
     Exceptions:
         No exceptions
@@ -141,15 +149,16 @@ def login(selected_file):
     for item in user_details:
         username_password[item[0]] = item[2]
     
+    # Checking credentials
     while True:
         if username in username_password.keys():         # Checking whether the username given exists or not
             if hash_password(password) == username_password[username]:  # Checking whether the given password matches or not
                 return True
                 
-            else:
+            else:  # Return values for LOGIN FAILURE
                 print("Wrong password")
-                password = input("Please provide your password: ")
-        else:
+                password = getpass("Please provide your password: ")
+        else:  # Return values for LOGIN FAILURE
             print("Wrong username")
             username = input("Please provide your username: ")
             password = getpass("Please provide your password: ")
@@ -167,6 +176,7 @@ def register(role, file):
     Exceptions:
         If "password" and "confirm password" section are different, the user is not able to register. The system will prompt the user once more to re-enter his/her password in both sections. 
     '''
+    global result
     clear()
     user_details = []
 
@@ -245,10 +255,11 @@ def register(role, file):
         else:
             print("IC/Passport number cannot be blank!")
             continue
-
+    
+    # Checking whether user already exists
     if userAlreadyExists(full_name, identification, file):
         print("You are already registered. You will now be redirected to login.")
-        login(file)
+        result = login(file)
         
     else:
         # Registering user's age
@@ -273,7 +284,7 @@ def register(role, file):
                 print("Contact number cannot be blank.")
                 continue
 
-        # Registeringk user's address
+        # Registering user's address
         while True:
             address = input("Please provide your address: ")
 
@@ -333,7 +344,7 @@ def userAlreadyExists(fullname=None, identification=None, file=None):
 def hash_password(password):
     return hashlib.sha256(str.encode(password)).hexdigest()
 
-def granted_for_access(role):
+def granted_for_access(role, status=None):
     '''
     Grants acccess for the users based on their roles
 
@@ -341,7 +352,7 @@ def granted_for_access(role):
         role: Checks whether the user is an Administrator or Customer
 
     Output:
-        Bool
+        None
     '''
     clear()
     if role.lower() == 'administrator':
@@ -353,15 +364,99 @@ def granted_for_access(role):
         print("[3] Display all records")
         print("[4] Display specific records")
         print("[5] Return Rented Car", end='\n\n')
-        print("[X] Return to Login/Register screen")
+        print("[R] Return to Login/Register screen")
+        print("[X] Exit program")
         option = input("Please select an option [a number]: ")
         admin_access(option)
     
     else:
-        print("You are granted access permissions of a customer.")
+        if status == 'registered':
+            print(f"WELCOME, {username}!")
+            print("--------------------")
+            print("Please select what you would like to do:")
+            print("[1] View catalog")
+            print("[2] Modify personal details")
+            print("[3] View personal details")
+            print("[4] View car details")
+            print("[5] Rent a car", end='\n\n')
+            print("[R] Return to Login/Register screen")
+            print("[X] Exit program")
+            option = input("Please select an option: ")
+            customer_access(option)
+
+        else:
+            print("WELCOME, CUSTOMER!")
+            print("------------------")
+            print("Please select what you would like to do:")
+            print("[1] View catalog")
+            print("[2] Register", end='\n\n')
+            print("[R] Return to Login screen")
+            print("[X] Exit program")
+            option = input("Please select what you would like to do:")
+            customer_access(option)
 
 def admin_access(option):
-    pass
+    if option == '1':
+        clear()
+        print("ADDING INFORMATION OF NEW CARS")
+        print("------------------------------")
+        car_name = input("Car Name\nPlease provide the name of the car: ")
+        car_brand = input("\nCar Model\nPlease provide the model of the car: ")
+        plate_number = input("\nPlate Number\nPlease provide the plate number of the car: ")
+        owner =  input("\nOwner\nPlease provide the name of the car's owner: ")
+        status = 'available'
+        duration = 0
+        seats = int(input("\nSeats\nHow many seats are there in the car (provide a number): "))
+        fuel_type = input("\nFuel\nWhat type of fuel does the car use: ")
+        short_desc = input("\nDescription\nPlease provide a short description for the vehicle: ")
+        rental_rate = int(input("\nRental\nPlease provide rental rate of the car: "))
+        price = "RM" + str(rental_rate)
+        car_details = [car_name, car_brand, plate_number, owner, status, duration, short_desc, seats, fuel_type, price]
+        
+        with open("Car_Records.txt", "a") as fp:
+            line = ''
+            for item in car_details:
+                line += str(item) + ', '
+            fp.write(line)
+    
+    elif option == '2':
+        searched_car = input("Which car's detail do you wish to modify? ")
+        new_list = []
+        with open('Car_Records.txt', "r+") as inputfile:
+            file = inputfile.read()
+
+            if(file.find(str(searched_car))) != -1:
+                for line in file.splitlines():
+                    if (line.find(str(searched_car))) != -1: # After this line, ask user what to change
+                        print("Which detail do you wish to modify?")
+                        print("[1] Car Name")
+                        print("[2] Car Model")
+                        print("[3] Plate Number")
+                        print("[4] Car's Owner")
+                        print("[5] Status")
+                        print("[6] Duration")
+                        print("[7] Short Description")
+                        print("[8] Seats")
+                        print("[9] Fuel Type")
+                        print("[10] Rental rates")
+                        detail_index = int(input("Please select one of the details that you wish to modify: "))
+                        modified_detail = input("New data: ")
+                        unlisted = (", ").join([line])
+                        for item in unlisted.split(", "):
+                            new_list.append(item)
+                        new_list[detail_index-1] = modified_detail
+                        print(new_list)
+            #         else:
+            #             new_lines += line + '\n'
+
+            # with open('text.txt', 'w') as updatedFile:
+            #     updatedFile.writelines(new_lines)
+
+    elif option.lower() == 'r':
+        main()
+    
+    elif option.lower() == 'x':
+        exit()
 
 def customer_access(option):
     pass
