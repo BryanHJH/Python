@@ -1,1 +1,4 @@
-Proton Saga, A001, WNY5667, Brian, available, 0, An old car that is still usable, 5, RON96, RM15, 
+Proton Saga, A001, WNY6776, Brian, available, 0, An old car that is still usable, 5, RON95, RM15, 
+Lotus Evija, FX001, FX1, Katar, Available, 0.0, First of the limited 130 models in the world!, 2, RON99, RM1000, 
+Perodua Ativa, AC110, HBA1032, Christiana, available, 0, The newest model from Perodua packed with useful features, 5, RON95, RM25, 
+Audi 18, Z001, WXY5698, Brian, Rented, 15.0, A great car that provides a great experience., 5, RON99, RM15, 

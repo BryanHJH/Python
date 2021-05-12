@@ -1,7 +1,7 @@
 from stdiomask import getpass
 import hashlib
 import os
-import datetime
+import time
 
 clear = lambda: os.system('cls')
 
@@ -45,8 +45,7 @@ def main():
         # Selected Register
         elif admin_input == '2': 
             register(role, 'admin_login_credentials')
-            if result:
-                granted_for_access(role)
+            granted_for_access(role)
 
         # Selected Exit Program
         elif admin_input.lower() == 'r': 
@@ -78,7 +77,7 @@ def main():
         # Selected Register
         elif customer_input == '2':
             register(role, 'customer_login_credentials')
-            if result:
+            if login('customer_login_credentials'):
                 status = 'registered'
                 granted_for_access(role, status)
 
@@ -102,6 +101,10 @@ def main():
     else:
         print("Invalid input. Please try again.")
         main()
+
+def sanitize_detail(detail):
+    detail = '-'.join(detail.split(", "))
+    return detail
 
 def login(selected_file): 
 
@@ -188,7 +191,7 @@ def register(role, file):
         username = input("Please provide your username: ")
 
         if username != '':
-            user_details.append(username)
+            user_details.append(sanitize_detail(username))
             break
         else:
             print("Username cannot be blank!")
@@ -289,7 +292,6 @@ def register(role, file):
             address = input("Please provide your address: ")
 
             if address != "":
-                user_details.append(address)
                 break
             else:
                 print("Address cannot be blank!")
@@ -306,6 +308,20 @@ def register(role, file):
                 else:
                     print("Admin ID cannot be blank.")
                     continue
+
+        else:
+            amount_paid = 0
+            amount_due = 0
+            bookings = 0
+            purchase_history = []
+            rental_duration = 0
+            user_details.append(amount_paid)
+            user_details.append(amount_due)
+            user_details.append(bookings)
+            user_details.append(rental_duration)
+            user_details.append(purchase_history)
+            
+        user_details.append(sanitize_detail(address))
         
         # Open the respective file and append all the details into it.
         with open(file, 'a') as fp:
@@ -396,10 +412,23 @@ def granted_for_access(role, status=None):
             customer_access(option)
 
 def admin_access(option):
+    '''
+    Function that determines the admin's access privileges
+
+    Arguments:
+        option: (From granted_for_access) Determines what the admin will do
+
+    Output:
+        Mostly writing to text files (customer_login_credentials & Car_Records.txt)
+    '''
+    role = 'administrator'
+
+    # Adding information of new cars into Car_Records.txt
     if option == '1':
         clear()
         print("ADDING INFORMATION OF NEW CARS")
         print("------------------------------")
+        # New car information
         car_name = input("Car Name\nPlease provide the name of the car: ")
         car_brand = input("\nCar Model\nPlease provide the model of the car: ")
         plate_number = input("\nPlate Number\nPlease provide the plate number of the car: ")
@@ -411,21 +440,49 @@ def admin_access(option):
         short_desc = input("\nDescription\nPlease provide a short description for the vehicle: ")
         rental_rate = int(input("\nRental\nPlease provide rental rate of the car: "))
         price = "RM" + str(rental_rate)
+        # Saving all the above information into a list
         car_details = [car_name, car_brand, plate_number, owner, status, duration, short_desc, seats, fuel_type, price]
         
+        # Opening Car_Records.txt
         with open("Car_Records.txt", "a") as fp:
             line = ''
+            # Writing all the items in the list above into a string, and then writing the line of string to the text file
             for item in car_details:
                 line += str(item) + ', '
             fp.write(line)
+            fp.write('\n')
+
+        # Returns to the admin's main menu screen
+        granted_for_access(role)
     
+    # Modifying car details
     elif option == '2':
+        # Opening Car_Records.txt and saving all details into a list
+        with open("Car_Records.txt", "r") as fp:
+            car_list = [line.split(', ') for line in fp] # First item of the list contains all information about the first car, second item contains all information of the second car and so on.
+        
+        car_number = {}
+        # Iterating through all items in the car_list
+        for item in car_list: 
+            if len(item) != 0:
+                # Adding Car_Name: Plate_Number key-value pairs into the dicitionary above
+                car_number[item[0]] = item[2]
+
+        clear()
+        print("AVAILABLE CARS")
+        print("--------------")
+        for plate_number in car_number.values():
+            print(plate_number)  # Printing out all the cars saved in the text file
+        
+        # Initializing necessary variables
         searched_car = input("Which car's detail do you wish to modify? ")
         new_list = []
-        with open('Car_Records.txt', "r+") as inputfile:
-            file = inputfile.read()
+        new_lines = ""
 
-            if(file.find(str(searched_car))) != -1:
+        with open('Car_Records.txt', "r+") as inputfile:
+            file = inputfile.read()  # Reading each line in the file
+
+            if(file.find(str(searched_car))) != -1:  # Searches through the file for "searched_car", returns "-1" if false
                 for line in file.splitlines():
                     if (line.find(str(searched_car))) != -1: # After this line, ask user what to change
                         print("Which detail do you wish to modify?")
@@ -439,24 +496,217 @@ def admin_access(option):
                         print("[8] Seats")
                         print("[9] Fuel Type")
                         print("[10] Rental rates")
-                        detail_index = int(input("Please select one of the details that you wish to modify: "))
-                        modified_detail = input("New data: ")
+
+                        unlisted = (", ").join([line])  # Joining all the details into a list named "unlisted"
+                        for item in unlisted.split(", "):
+                            new_list.append(item)  # Creating a new list for the specific one car [Car_Name, Car_OWner, ...]
+
+                        detail_index = int(input("Please select one of the details that you wish to modify: "))    
+                        if detail_index == 5:  # If the modified data is the status of the car, modify the rental duration as well
+                            status = input("New status: ")
+                            duration = float(input("Rental duration (days): "))
+                            # Changing the data inside the list
+                            new_list[detail_index-1] = status
+                            new_list[detail_index] = str(duration)
+                            # Joining the list into a line of string
+                            new_lines += ", ".join(new_list) + '\n'
+                        else: 
+                            # Changing the data inside the list
+                            modified_detail = input("New data: ")
+                            new_list[detail_index-1] = modified_detail
+                            # Joining the list into a line of string
+                            new_lines += ", ".join(new_list) + '\n'
+
+                    else:
+                        new_lines += line + '\n'
+
+            # Updating the file by writing the new line into it. 
+            with open('Car_Records.txt', 'w') as updatedFile:
+                updatedFile.writelines(new_lines)
+
+        granted_for_access(role)
+
+    # Display records
+    elif option == '3':
+        clear()
+        print("DISPLAY RECORDS OF:")
+        print("[1] Rented cars")
+        print("[2] Available cars")
+        print("[3] Customer Bookings")
+        print("[4] Customer Payments", end='\n\n')
+        print("[R] Return to previous screen")
+        print("[X] Exit program")
+        user_option = input("Please select an option: ")
+
+        # Display records of cars
+        if user_option == '1' or user_option == '2':
+            clear()
+            with open("Car_Records.txt", "r") as fp:
+                car_details = [line.split(", ") for line in fp] 
+            for item in car_details:
+                # Display "Rented" cars
+                if user_option == '1' and item[4].lower() == 'rented':
+                    print(f"Car: {item[0]}, Plate Number: {item[2]}, Rental Duration: {item[5]}")   
+                # Display "Available" cars
+                elif user_option == '2' and item[4].lower() == 'available':
+                    print(f"Car: {item[0]}, Plate Number: {item[2]}")
+
+        elif user_option == '3' or user_option == '4':
+            clear()
+            with open("customer_login_credentials", "r") as fp:
+                customer_details = [line.split(", ") for line in fp]
+            for item in customer_details:
+                # Display customer bookings
+                if user_option == '3':
+                    print(f"{item[3]}'s number of bookings: {item[11]}") # item[3] is the customer name, item[11] is the customer's bookings
+                # Display customer payments
+                else:
+                    # item[3] is the customer name, item[8] is the amount paid, item[9] is the amount due
+                    print(f"{item[3]}'s payments: \nAmount Paid -- {item[8]} \nAmount Due -- {item[9]}\n") 
+
+        # Returns to the admin's main menu page
+        elif user_option.lower() == 'r':
+            granted_for_access(role)
+
+        # Exits the program
+        elif user_option.lower() == 'x':
+            exit()
+
+        # If user provides wrong input, the system will prompt them to retry
+        else:
+            print("Invalid option. Please try again.")
+            time.sleep(1.5)  # The program waits for a while so that the user can read the print statement above
+            admin_access('3')
+
+        # Asks user whether he/she wants to check other records
+        user_option = input("\n\nDo you want to return to the previous screen? [y/n] ")
+        if user_option[0].lower() == 'y':
+            admin_access('3')
+        else: 
+            granted_for_access(role)
+
+    # Display a specific record
+    elif option == '4':
+        clear()
+        print("CHOOSE WHAT TO SEARCH FOR:")
+        print("[1] Customer bookings")
+        print("[2] Customer payments", end='\n\n')
+        print("[R] Return to previous screen")
+        print("[X] Exit")
+        user_option = input("Please select one of the options: ")
+
+        # Opening customer_login_credentials that store customer information
+        with open("customer_login_credentials", "r") as fp:
+            customer_details = [line.split(", ") for line in fp]
+
+        # Initiates a dictionary that will store customer information depending what is selected
+        displayed_information = {}
+        if user_option == '1':
+            clear()
+            # Stores customer name (item[3]) and customer bookings (item[10]) into the dictionary above
+            for item in customer_details:
+                displayed_information[item[3]] = item[10]
+
+            print("CUSTOMER BOOKINGS")
+            print("-----------------")
+            for name, booking in displayed_information.items():
+                print(name + ": " + booking)
+        
+        elif user_option == '2':
+            clear()           
+            # Stores customer name (item[3]) and customer payments (item[8]) into the dictionary above
+            for item in customer_details:
+                displayed_information[item[3]] = item[8]
+
+            print("CUSTOMER PAYMENTS")
+            print("-----------------")
+            for name, payment in displayed_information.items():
+                print(name + ": " + payment)
+        
+        # Returns to the admin's main menu page
+        elif user_option.lower() == 'r':
+            granted_for_access(role)
+
+        # Exits the program
+        elif user_option.lower() == 'x':
+            exit()
+
+        # Prompts the user to try again if he/she provides invalid input
+        else:
+            clear()
+            print("Invalid option. Please try again")
+            time.sleep(1.5) # Allow the system to wait for a while before the prompt, so that the user can read the print statement above this line
+            admin_access('4')
+
+        user_option = input("\n\nDo you want to return to the previous screen? [y/n] ")
+        if user_option[0].lower() == 'y':
+            admin_access('4')
+        else: 
+            granted_for_access(role)
+
+    # Returning a rented car
+    elif option == '5':
+        # Opening Car_Records.txt and saving all details into a list
+        with open("Car_Records.txt", "r") as fp:
+            car_list = [line.split(', ') for line in fp] # The list where all the details are saved
+        
+        car_number = {}
+        for item in car_list: 
+            if len(item) != 0 and item[4].lower() == 'rented':
+                car_number[item[0]] = item[2] # Saves the details needed into a dictionary
+
+        clear()
+        print("RENTED CARS")
+        print("--------------")
+        for plate_number in car_number.values():
+            print(plate_number)  # Prints out the plate number of "Rented" cars only
+        print()
+
+        # Initializes the necessary variables
+        returned_car = input("Please provide the plate number of the returned car: ")
+        new_list = []
+        new_lines = ""
+
+        with open('Car_Records.txt', "r+") as inputfile:
+            file = inputfile.read()
+
+            if(file.find(str(returned_car))) != -1:
+                for line in file.splitlines():
+                    if (line.find(str(returned_car))) != -1: # Checks for the returned car's plate number
                         unlisted = (", ").join([line])
                         for item in unlisted.split(", "):
-                            new_list.append(item)
-                        new_list[detail_index-1] = modified_detail
-                        print(new_list)
-            #         else:
-            #             new_lines += line + '\n'
+                            new_list.append(item)    
+                        if new_list[4].lower() == 'rented':  # Checking whether is it really rented
+                            new_list[4] = 'Available'  # Changes the status from "Rented" to "Available"
+                            new_list[5] = '0'          # Changes the rental duration to 0
+                            new_lines += ", ".join(new_list) + '\n'  # Joins everything into a string
+                        else:
+                            print("Car is already available")
+                    else:
+                        new_lines += line + '\n'
 
-            # with open('text.txt', 'w') as updatedFile:
-            #     updatedFile.writelines(new_lines)
+            with open('Car_Records.txt', 'w') as updatedFile:
+                updatedFile.writelines(new_lines)
 
+        # Ask the user whether he/she wants to return more cars
+        user_option = input("\n\nDo you want to return to the previous screen? [y/n] ")
+        if user_option[0].lower() == 'y':
+            admin_access('4')
+        else: 
+            granted_for_access(role)
+        
+    # Returns to the Login/Register screen
     elif option.lower() == 'r':
         main()
     
+    # Exits the program
     elif option.lower() == 'x':
         exit()
+
+    # Prompts the user for input again if invalid input is given
+    else:
+        print("Invalid input. Please try again.")
+        granted_for_access(role)
 
 def customer_access(option):
     pass

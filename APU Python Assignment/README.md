@@ -91,12 +91,12 @@ This section contains all the expected files for this assignment.
       6. Admin ID (For Admins Only)
       7. Age
       8. Phone Number
-      9. Address
-      10. Payment/Amount Paid (For Customers Only)
-      11. Amount Due (For Customers Only)
-      12. Bookings (For Customers Only)
-      13. No. of Cars Rented/Purchase History (For Customers Only)
-      14. Rental Duration (For Customers Only)
+      9. Payment/Amount Paid (For Customers Only)
+      10. Amount Due (For Customers Only)
+      11. Bookings (For Customers Only)
+      12. No. of Cars Rented/Purchase History (For Customers Only)
+      13. Rental Duration (For Customers Only)
+      14. Address
    5. Admin and Customers will have their information appended to different files, which will be accepted as an argument in register() function.
    6. Before registering, the system **must** check whether **the user is already registered** (It can be in another function or be in the same function)
 
