@@ -49,11 +49,9 @@ This section contains all the expected files for this assignment.
 
 ## 2.2 Text files
 
-1. [admin_login_credentials.txt](admin2.txt): Text file containing all credentials of admins, including the       usernames, passwords, names, address, contact no. and so on  
-2. customer2.txt: Text file contaning all credentials of users, including the usernames, passwords, names, age, address, contact no. and so on  
-3. car2.txt: Text file containing the details of cars, including car names, brand, model, status (available or rented), duration being rented, price  
-4. customer2.txt: Text file containing the purchase details of customers, including their names, IC, bookings, no. of cars rented, amount paid, amount overdue, rental duration
-5. admin2.txt: Text file containing the details of Admins
+1. customer2.txt: Text file contaning all credentials of users, including the usernames, passwords, names, age, address, contact no. and so on  
+2. car2.txt: Text file containing the details of cars, including car names, brand, model, status (available or rented), duration being rented, price  
+3. admin2.txt: Text file containing the details of Admins
 
 ## 2.3 PDF files
 
