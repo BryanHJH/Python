@@ -1,0 +1,5 @@
+Howard, 2103207486e1e4d54795e821ef4766d67dbd8757dc7c3e8e5a9d6b903e15935d, Howard Leong Yiq Zhenn, 560930-10-8679, 21, 019-405-3043, 136-Jalan 1D/3-Bandar Baru Beryls-57200 Kuala Lumpur, 6-400; 6-20006-150; 6-540; , , Proton Saga-Lotus Evija-Kenari-Honda City, 
+Brian, 66c782e8f95ba958f28adaae576c42a263c2449af416fb844499bef7fd41b2d0, Brian Ng Yong Kang, 234455-10-9098, 20, 018-2034953, 156-Seksyen 1U-Bandar Kuching-88496 Sarawak, , , , 
+Christina, 93c6b09e0fc292a99a2d60d862f484b66c8709f78fd3a30ceaec6422a2197824, Christina Hor Jin Pei, 454545-10-3920, 30, 019-789-5069, 145-Jalan 1O/3-Bandar Selangor-45000 Selangor, , 2000, Honda City, 
+Ryan, e0e3a2b6471d044a53a7757994b51dd33c6b3ec90e1aca21cebc8e2ae79d6d9b, Ryan Kho Yew Jin, 234345-10-1111, 19, 038-204-29422, Lot 122-Seksyen 18-Shah Alam, 6-10000; , , Porsche GT3, 
+Damian, 720036c8101f751b82cdba6e74fbd217419a2d478dd49f6d7ba6697ed3810ece, Damian Lam, 900120-10-2039, 20, 019-203-2039, 18-Jalan 1A/3-Bandar Baru Sungai Buloh, , , , 
